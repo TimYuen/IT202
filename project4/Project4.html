@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> </title>
+        
+    <style>
+        canvas {background-color: white;}
+        
+        #OnePiece {display:none;}
+    </style>
+    </head>
+    <body>
+<img id="OnePiece" width = "100px" height="100px" src ="https://myanimelist.cdn-dena.com/images/useravatars/4342563.gif" alt="onePiece pic">
+        
+<canvas id="attribute" width="500" height="500"  style="border:1px solid #000000;">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+// global variables
+   var image = document.getElementById("OnePiece");
+   var harm = {x:400, y:200, color: 'red', radius: 30, shape: 'circle', score: 0};
+   var bene = {x:200, y:200, color: 'blue', radius: 30, shape: 'circle'};
+   var player = {mig:image, rx:350, x:300, ry: 425, y: 375, radius: 35, shape:"image", lives: 3, score: 0}; 
+   //{x:300, y:450, color: 'green', radius: 10, shape: 'circle', lives: 3, score: 0};
+    
+// objects for game, player, harm and bene
+    var c = document.getElementById("attribute");
+    var ctx = c.getContext("2d");  
+    ctx.font = "30px Arial";
+	ctx.fillText("Lives: " + player.lives,10, 50);
+	ctx.fillText("Score: " + player.score,10, 100);
+// canvas and context reference
+
+function draw () {
+	// update character position properties
+	ctx.clearRect(0,0,c.width,c.height);
+	
+	harm.y+=4;
+	bene.y+=4;
+
+drawCharacter(player);
+drawCharacter(harm);
+drawCharacter(bene);
+	
+	ctx.fillText("Lives: " + player.lives,10, 50);
+	ctx.fillText("Score: " + player.score,10, 100);	
+	
+if (areColliding(player,harm)) {
+	//  set properties
+	// lose a life
+	harm.y = 0;
+	harm.x = Math.floor((Math.random()*c.width));
+	player.lives -= 1;
+}
+
+if (areColliding(player,bene)) {
+	//  set properties
+	//	get a life
+	bene.y = 0;
+	bene.x = Math.floor((Math.random()*c.width));
+	//player.lives++;
+	player.score++;
+}
+
+if (reachedEdge(harm, 'bottom')) {
+	// set y property
+	harm.y = 0;
+	harm.x = Math.floor((Math.random()*c.width));
+}
+
+if (reachedEdge(bene, 'bottom')) {
+	// set y property
+	bene.y = 0;
+	bene.x = Math.floor((Math.random()*c.width));
+}
+
+
+
+if(endGame(player)){
+	ctx.clearRect(0,0,c.width,c.height)
+	console.log("tfxt");
+	ctx.font = "30px Arial";
+	ctx.fillText("Lives: " + player.lives,10,50);
+	ctx.fillText("Score: " + player.score,10, 100);
+	ctx.fillStyle ="red";
+	ctx.textAlign = "center";
+	ctx.fillText("GAME OVER!!!!!", c.width/2, c.height/2);
+	//cancelAnimationFrame(draw);
+	return;
+}
+
+
+//start the drawing
+
+requestAnimationFrame(draw);
+
+}
+
+function drawCharacter (character) {
+switch (character.shape) {
+		case 'circle' :
+			drawCircle(character.x, character.y, character.radius, character.color);
+			break;
+case 'square' :
+		// call function to draw square
+		break;
+case 'image' :
+		// call function to draw image
+		ctx.drawImage(character.mig, character.x, character.y);
+		break;
+	default: 
+		console.log('character.shape case fell through');	
+}	
+}  
+
+function drawCircle (x, y, radius, color) {
+	//
+        ctx.beginPath();
+        ctx.arc(x,y,radius,0,2*Math.PI);
+        
+        ctx.fillStyle = color;
+        ctx.fill();
+       
+       
+}
+function endGame(character){
+	if(character.lives == 0)
+	{return true;}
+}
+
+function areColliding(character1,character2) {
+	// use 2d collision for circles
+	var sum = character1.radius+character2.radius;
+	var dx = character1.rx - character2.x;
+	var dy = character1.ry - character2.y;
+	var distance = Math.sqrt(dx * dx + dy * dy);
+
+	if (distance < sum) {
+    // collision detected!
+    return true;
+	}
+}
+function reachedEdge(character, edge) {
+	if (edge == 'bottom' && character.y > c.height)
+		return true;
+		
+	if (edge == 'left' && (character.x < 0))
+		return true;
+	
+	if (edge == 'right' && (character.x > c.width - 100))
+		return true;
+		
+}
+
+$(document).ready(function() {
+	// arrow key keydown event handlers to change player position
+	
+	document.addEventListener('keydown', (event) => {
+		const kN = event.key;
+		console.log(player.x);
+		if(kN == "ArrowLeft"){
+			if(!reachedEdge(player,'left')){
+				player.x -= 10;
+				player.rx -= 10;}
+		}
+		if(kN == "ArrowRight"){
+			if(!reachedEdge(player,'right'))
+			{	player.x += 10;
+				player.rx += 10;}
+		}
+	},false);
+	
+
+    requestAnimationFrame(draw);
+});
+//requestAnimationFrame(draw);
+
+</script>
+</canvas>
+   
+    
+   
+    </body>
+     
+</html>
