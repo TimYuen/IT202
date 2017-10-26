@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> </title>
+        
+    <style>
+        canvas {background-color: white;}
+    </style>
+    </head>
+    <body>
+        
+        
+<canvas id="attribute" width="500" height="500"  style="border:1px solid #000000;">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    
+    <script>
+    
+    $("#attribute").on("click", function(event){
+        ctx.clearRect(0,0,c.width,c.height);
+        //console.log(event);
+        //drawCircle(event.clientX, event.clientY);
+    });
+        var c=document.getElementById("attribute");
+        var ctx=c.getContext("2d");    
+        
+        function drawCircle(x,y){
+
+        ctx.beginPath();
+        var rad = Math.floor(Math.random()*50);
+        
+        var xp = Math.floor(Math.random()*c.width);
+        var yp = Math.floor(Math.random()*c.height);
+        ctx.arc(xp,yp,rad,0,2*Math.PI);
+        ctx.fillStyle = 'rgb(0,255,0)';
+        ctx.fill();
+       // ctx.stroke();
+        
+        requestAnimationFrame(drawCircle);
+    } 
+    requestAnimationFrame(drawCircle);
+    
+    </script>
+</canvas>
+   
+    
+   
+    </body>
+     
+</html>

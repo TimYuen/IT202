@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> </title>
+         <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script>
+          //
+          // Define your database
+          //
+          
+        
+        var db = new Dexie("MyDB");
+        db.version(1).stores({settings: "id++,name,value"});
+        
+        db.on("populate", function() {
+            db.settings.add({name: "Josephina", value: "unisex"});
+        });
+        db.open()
+      </script>
+    </head>
+    <body>
+        <form>
+            <input type="radio" value="share loc val">loc val</input>
+        </form>
+    
+
+    </body>
+</html>
