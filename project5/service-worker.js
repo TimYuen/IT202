@@ -1,23 +1,23 @@
 var dataCacheName = 'weatherData-v1';
 var cacheName = 'weatherPWA-step-6-1';
 //list of files required for the app shell
-var filesToCache = ['https://preview.c9users.io/tyuen6/project1/project5/',
-  'https://preview.c9users.io/tyuen6/project1/project5/index.html',
-  'https://preview.c9users.io/tyuen6/project1/project5/scripts/app.js',
-  'https://preview.c9users.io/tyuen6/project1/project5/styles/inline.css',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/clear.png',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/cloudy-scattered-showers.png',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/cloudy.png',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/fog.png',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/ic_add_white_24px.svg',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/ic_refresh_white_24px.svg',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/partly-cloudy.png',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/rain.png',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/scattered-showers.png',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/sleet.png',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/snow.png',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/thunderstorm.png',
-  'https://preview.c9users.io/tyuen6/project1/project5/images/wind.png'];
+var filesToCache = ['./',
+  './index.html',
+  './scripts/app.js',
+  './styles/inline.css',
+  './images/clear.png',
+  './images/cloudy-scattered-showers.png',
+  './images/cloudy.png',
+  './images/fog.png',
+  './images/ic_add_white_24px.svg',
+  './images/ic_refresh_white_24px.svg',
+  './images/partly-cloudy.png',
+  './images/rain.png',
+  './images/scattered-showers.png',
+  './images/sleet.png',
+  './images/snow.png',
+  './images/thunderstorm.png',
+  './images/wind.png'];
 
 //service worker opens the caches object and populate it with assets
 //necessary to load the App Shell
