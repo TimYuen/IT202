@@ -1,0 +1,398 @@
+<!--
+CandyCrush
+Your Name: Timothy Yuen
+Collaborators: www.w3schools.com, stackoverflow.com, www.google.com
+-->
+<!DOCTYPE html>
+<html>
+<!--
+/* Copyright (c) 2017 MIT 6.813/6.831 course staff, all rights reserved.
+ * Redistribution of original or derived work requires permission of course staff.
+ */
+-->
+
+<head>
+<meta charset="utf-8">
+<title>CandyCrush</title>
+
+<!-- Load style sheets -->
+<link rel="stylesheet" href=
+  "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.css">
+
+<link rel="stylesheet" href="mainLayout.css">
+
+<!-- Use mobile-aware viewport -->
+<meta name="viewport" content=
+  "width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Load any supplemental Javascript libraries here -->
+<script src=
+  "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src=
+  "https://cdnjs.cloudflare.com/ajax/libs/seedrandom/2.4.2/seedrandom.js">
+</script>
+<script src="candy.js"></script>
+<script src="board.js"></script>
+<script src="rules.js"></script>
+
+<script>
+
+// By default, the first board loaded by your page will be the same 
+// each time you load (which is accomplished by "seeding" the random
+// number generator. This makes testing (and grading!) easier!
+Math.seedrandom(0);
+
+
+// A short jQuery extension to read query parameters from the URL.
+$.extend({
+  getUrlVars: function() {
+    var vars = [], pair;
+    var pairs = window.location.search.substr(1).split('&');
+    for (var i = 0; i < pairs.length; i++) {
+      pair = pairs[i].split('=');
+      vars.push(pair[0]);
+      vars[pair[0]] = pair[1] &&
+          decodeURIComponent(pair[1].replace(/\+/g, ' '));
+    }
+    return vars;
+  },
+  getUrlVar: function(name) {
+    return $.getUrlVars()[name];
+  }
+});
+
+// constants
+var DEFAULT_BOARD_SIZE = 8;
+
+// data model at global scope for easier debugging
+var board;
+var rules;
+
+// initialize board
+if ($.getUrlVar('size') && $.getUrlVar('size') >= 3) {
+  board = new Board($.getUrlVar('size'));
+} else {
+  board = new Board(DEFAULT_BOARD_SIZE);
+}
+
+// load a rule
+rules = new Rules(board);
+
+// Final initialization entry point: the Javascript code inside this block
+// runs at the end of start-up when the page has finished loading.
+$(document).ready(function()
+{
+  // Your code here.
+  CreateTable();
+  rules.prepareNewGame();
+  document.getElementById('moveid').value = "";
+  document.getElementById('moveid').focus();
+  document.getElementById('left').disabled = true;
+  document.getElementById('right').disabled = true;
+  document.getElementById('top').disabled = true;
+  document.getElementById('bottom').disabled = true;
+  
+  
+$("#moveid").focusout(Check);
+
+});
+
+function Check(){
+  var row = "12345678"
+  var col = "abcdefgh";
+  var moves = ["up", "down", "left", "right"];
+  
+  var exist = false;
+  var stuff = $(this).val();
+  
+  if(stuff == ''){
+    exist = false;
+    return false;
+  }
+  else if(stuff.length == 2 && col.search(stuff.charAt(0)) != -1 && row.search(stuff.charAt(1)) != -1){
+  // the input exists
+  exist = true;
+  //alert(exist);
+  var boardcol = check(stuff.charAt(0));
+  var boardrow = Number(stuff.charAt(1))-1;
+  var candy = board.getCandyAt(boardrow,boardcol)
+  
+  
+    if(rules.isMoveTypeValid(candy, moves[0]))
+    {
+      $('#top').prop('disabled', !exist);
+    }
+    if(rules.isMoveTypeValid(candy, moves[1]))
+    {
+      $('#bottom').prop('disabled', !exist);
+    }
+    if(rules.isMoveTypeValid(candy, moves[2]))
+    {
+      $('#left').prop('disabled', !exist);
+    }
+    if(rules.isMoveTypeValid(candy, moves[3]))
+    {
+      $('#right').prop('disabled', !exist);
+    }
+  }
+  else{
+    exist = false;
+  }
+  
+  
+  
+  
+}
+/* Event Handlers */
+// access the candy object with info.candy
+
+// add a candy to the board
+$(board).on('add', function(e, info)
+{
+  
+  // Your code here.
+  var color = info.candy.color;
+  var x = document.getElementById("GameTable1").rows[info.toRow].cells[info.toCol]; 
+  x.style.backgroundColor = color;
+  if(color != "yellow")
+  {
+    x.style.color = "white";
+  }
+  else
+  x.style.color = "black";
+  
+});
+
+// move a candy on the board
+$(board).on('move', function(e, info)
+{
+  //Your code here.
+  var color = info.candy.color;
+  var candy = document.getElementById("GameTable1").rows[info.toRow].cells[info.toCol];
+  candy.style.backgroundColor = color;
+  if(color != "yellow")
+  {
+    candy.style.color = "white";
+  }
+  else
+  candy.style.color = "black";
+  
+});
+
+// remove a candy from the board
+$(board).on('remove', function(e, info)
+{
+  // Your code here.
+  var color = '#F0F8FF';
+  var candy = document.getElementById("GameTable1").rows[info.fromRow].cells[info.fromCol];
+  candy.style.backgroundColor = color;
+  candy.style.color = "black";
+  //var boardCandy = board.getCandyAt(info.fromRow, info.fromCol);
+  //rules.removeAt(info.fromRow, info.fromCol);
+  
+});
+
+// move a candy on the board
+$(board).on('scoreUpdate', function(e, info)
+{
+  // Your code here. To be implemented in pset 2.
+  
+});
+
+// Button Events
+$(document).on('click', "#NewGame", function(evt)
+{
+  // Your code here.
+  board.clear();
+  rules.prepareNewGame();
+});
+
+
+function check(letter){
+  switch(letter){
+    case "a": {
+      return 0;
+    }
+    case "b": {
+      return 1;
+    }
+    case "c": {
+      return 2;
+    }
+    case "d": {
+      return 3;
+    }
+    case "e": {
+      return 4;
+    }
+    case "f": {
+      return 5;
+    }
+    case "g": {
+      return 6;
+    }
+    case "h": {
+      return 7;
+    }
+    default:
+    return 8;
+  }
+}
+
+function arrowButton(direction){
+  var move = document.getElementById('moveid').value;
+  var letter = move.slice(0,1);
+  var row = Number(move.slice(1,2)) - 1;
+  var col = check(letter);
+  
+  
+  //var candy1 = document.getElementById("GameTable1").rows[row].cells[col]; 
+  //get the candy
+  
+  var realc = board.getCandyAt(row,col);
+  //show color if right
+  //alert(board.getCandyInDirection);
+  
+  //get the neighbor candy
+   var candy2 = board.getCandyInDirection(realc, direction);
+  
+  //check if the right color neighbor
+  // if(candy2){
+  //   alert(candy2.color);
+  // }
+  
+  
+  //call the flippening
+  board.flipCandies(realc, candy2);
+  
+  //refocus on box after arrow clicked
+  document.getElementById('moveid').value = "";
+  document.getElementById('moveid').focus();
+  }
+  
+  
+$(document).on('click', "#left", function(evt)
+{
+  // Your code here.
+  arrowButton("left");
+  document.getElementById('left').disabled = true;
+  document.getElementById('right').disabled = true;
+  document.getElementById('top').disabled = true;
+  document.getElementById('bottom').disabled = true;
+});
+
+$(document).on('click', "#top", function(evt)
+{
+  // Your code here.
+  arrowButton("up");
+  document.getElementById('left').disabled = true;
+  document.getElementById('right').disabled = true;
+  document.getElementById('top').disabled = true;
+  document.getElementById('bottom').disabled = true;
+});
+$(document).on('click', "#right", function(evt)
+{
+  // Your code here.
+  arrowButton("right");
+  document.getElementById('left').disabled = true;
+  document.getElementById('right').disabled = true;
+  document.getElementById('top').disabled = true;
+  document.getElementById('bottom').disabled = true;
+});
+$(document).on('click', "#bottom", function(evt)
+{
+  // Your code here.
+  arrowButton("down");
+  document.getElementById('left').disabled = true;
+  document.getElementById('right').disabled = true;
+  document.getElementById('top').disabled = true;
+  document.getElementById('bottom').disabled = true;
+});
+
+$(document).on('click', "#crush", function(evt)
+{
+  // Your code here.
+  //remove crushed candies then repopulate board
+  var strike = rules.getCandyCrushes();
+  rules.removeCrushes(strike);
+  setTimeout(rules.moveCandiesDown, 500);
+  
+  //rules.moveCandiesDown();
+});
+
+
+// keyboard events arrive here
+$(document).on('keydown', function(evt) {
+  // Your code here.
+  
+});
+
+function CreateTable()
+{
+    var tablecontents = "<table id='GameTable1'>";
+    var i = 1;
+    for (i; i <= 8; i ++) {
+      tablecontents += "<tr>";
+      
+      tablecontents += "<td id='cell1'>a" + i + "</td>";
+      tablecontents += "<td id='cell2'>b" + i + "</td>";
+      tablecontents += "<td id='cell3'>c" + i + "</td>";
+      tablecontents += "<td id='cell4'>d" + i + "</td>";
+      tablecontents += "<td id='cell5'>e" + i + "</td>";
+      tablecontents += "<td id='cell6'>f" + i + "</td>";
+      tablecontents += "<td id='cell7'>g" + i + "</td>";
+      tablecontents += "<td id='cell8'>h" + i + "</td>";
+      tablecontents += "</tr>";
+      }
+    tablecontents += "</table>";
+    document.getElementById("GameTable").innerHTML = tablecontents;
+}
+
+</script>
+
+</head>
+
+
+<body>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3" id="firstColumn">
+      <div>
+      <!-- Column 1 Code Here -->
+      <p id="firstP">Candy<br>Crush<br>
+          <input type="button" class="btn" id="NewGame" value="New Game"/>
+        </p>
+      </div>
+  </div>
+
+    <div class="col-md-6" id="mainColumn">
+    
+    <p id="GameTable" >
+      <!--generate the table in this paragraph-->
+    </p>
+    
+    </div>
+
+    <div class="col-md-3" id="lastColumn" style="margin-left:">
+
+    <form>
+      Move:
+     <input type="text" id="moveid" style="width:35px;height:30px" maxlength=2 /><br>
+    </form>
+    <div class="arrows">
+    <input type="button" class="btn" id="top" value="&#x2191"/><br>
+    <input type="button" class="btn" id="left" value="&#x2190"/>
+    <input type="button" class="btn" id="right" value="&#x2192"/><br>
+    <input type="button" class="btn" id="bottom" value="&#x2193"/> 
+    </div>
+    <br>
+    <input type="button" class="btn" id="crush" value="Crush Once"/>
+    
+    </div>
+  </div> <!-- class="row" -->
+</div> <!-- class="container" -->
+
+</body>
+
+</html>
